@@ -1,0 +1,13 @@
+{
+    "name": "example-app",
+    "require": {
+        "cakephp/cakephp": "2.8.*",
+	"hybridauth/hybridauth": "2.6.*"
+    },
+    "config": {
+        "vendor-dir": "Vendor/"
+    },
+    "require-dev": {
+        "cakephp/debug_kit": "2.2.*"
+    }
+}

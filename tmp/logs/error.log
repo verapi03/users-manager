@@ -1,0 +1,47 @@
+2016-02-19 17:55:29 Error: [MissingPluginException] Plugin DebugKit could not be found.
+Exception Attributes: array (
+  'plugin' => 'DebugKit',
+)
+Request URL: /
+Stack Trace:
+#0 /Users/andresvera/Sites/usersmanager/Vendor/cakephp/cakephp/lib/Cake/Core/App.php(227): CakePlugin::path('DebugKit')
+#1 /Users/andresvera/Sites/usersmanager/Vendor/cakephp/cakephp/lib/Cake/Core/App.php(549): App::path('Controller/Comp...', 'DebugKit')
+#2 [internal function]: App::load('ToolbarComponen...')
+#3 [internal function]: spl_autoload_call('ToolbarComponen...')
+#4 /Users/andresvera/Sites/usersmanager/Vendor/cakephp/cakephp/lib/Cake/Controller/ComponentCollection.php(110): class_exists('ToolbarComponen...')
+#5 /Users/andresvera/Sites/usersmanager/Vendor/cakephp/cakephp/lib/Cake/Controller/ComponentCollection.php(53): ComponentCollection->load('DebugKit.Toolba...', Array)
+#6 /Users/andresvera/Sites/usersmanager/Vendor/cakephp/cakephp/lib/Cake/Controller/Controller.php(644): ComponentCollection->init(Object(UsersController))
+#7 /Users/andresvera/Sites/usersmanager/Vendor/cakephp/cakephp/lib/Cake/Routing/Dispatcher.php(188): Controller->constructClasses()
+#8 /Users/andresvera/Sites/usersmanager/Vendor/cakephp/cakephp/lib/Cake/Routing/Dispatcher.php(167): Dispatcher->_invoke(Object(UsersController), Object(CakeRequest))
+#9 /Users/andresvera/Sites/usersmanager/webroot/index.php(111): Dispatcher->dispatch(Object(CakeRequest), Object(CakeResponse))
+#10 {main}
+2016-02-19 19:14:04 Error: Fatal Error (4): syntax error, unexpected ']' in [/Users/andresvera/Sites/usersmanager/Model/User.php, line 95]
+2016-02-19 19:14:04 Error: [FatalErrorException] syntax error, unexpected ']'
+Request URL: /users/signup
+Stack Trace:
+#0 /Users/andresvera/Sites/usersmanager/Vendor/cakephp/cakephp/lib/Cake/Error/ErrorHandler.php(213): ErrorHandler::handleFatalError(4, 'syntax error, u...', '/Users/andresve...', 95)
+#1 [internal function]: ErrorHandler::handleError(4, 'syntax error, u...', '/Users/andresve...', 95, Array)
+#2 /Users/andresvera/Sites/usersmanager/Vendor/cakephp/cakephp/lib/Cake/Core/App.php(970): call_user_func('ErrorHandler::h...', 4, 'syntax error, u...', '/Users/andresve...', 95, Array)
+#3 /Users/andresvera/Sites/usersmanager/Vendor/cakephp/cakephp/lib/Cake/Core/App.php(943): App::_checkFatalError()
+#4 [internal function]: App::shutdown()
+#5 {main}
+2016-02-19 22:15:31 Error: Fatal Error (4): syntax error, unexpected ';' in [/Users/andresvera/Sites/usersmanager/Controller/UsersController.php, line 22]
+2016-02-19 22:15:31 Error: [FatalErrorException] syntax error, unexpected ';'
+Request URL: /
+Stack Trace:
+#0 /Users/andresvera/Sites/usersmanager/Vendor/cakephp/cakephp/lib/Cake/Error/ErrorHandler.php(213): ErrorHandler::handleFatalError(4, 'syntax error, u...', '/Users/andresve...', 22)
+#1 [internal function]: ErrorHandler::handleError(4, 'syntax error, u...', '/Users/andresve...', 22, Array)
+#2 /Users/andresvera/Sites/usersmanager/Vendor/cakephp/cakephp/lib/Cake/Core/App.php(970): call_user_func('ErrorHandler::h...', 4, 'syntax error, u...', '/Users/andresve...', 22, Array)
+#3 /Users/andresvera/Sites/usersmanager/Vendor/cakephp/cakephp/lib/Cake/Core/App.php(943): App::_checkFatalError()
+#4 [internal function]: App::shutdown()
+#5 {main}
+2016-02-19 22:17:35 Error: Fatal Error (4): syntax error, unexpected ';' in [/Users/andresvera/Sites/usersmanager/Controller/UsersController.php, line 21]
+2016-02-19 22:17:35 Error: [FatalErrorException] syntax error, unexpected ';'
+Request URL: /
+Stack Trace:
+#0 /Users/andresvera/Sites/usersmanager/Vendor/cakephp/cakephp/lib/Cake/Error/ErrorHandler.php(213): ErrorHandler::handleFatalError(4, 'syntax error, u...', '/Users/andresve...', 21)
+#1 [internal function]: ErrorHandler::handleError(4, 'syntax error, u...', '/Users/andresve...', 21, Array)
+#2 /Users/andresvera/Sites/usersmanager/Vendor/cakephp/cakephp/lib/Cake/Core/App.php(970): call_user_func('ErrorHandler::h...', 4, 'syntax error, u...', '/Users/andresve...', 21, Array)
+#3 /Users/andresvera/Sites/usersmanager/Vendor/cakephp/cakephp/lib/Cake/Core/App.php(943): App::_checkFatalError()
+#4 [internal function]: App::shutdown()
+#5 {main}
