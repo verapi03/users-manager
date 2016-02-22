@@ -17,7 +17,6 @@ class UsersController extends AppController {
 		if ($this->Session->check('Auth.User')) {
 			$this->redirect(array('action' => 'index'));		
 		}
-		//Try to authenticate with the post information
 		if ($this->request->is('post')) {
 			if ($this->Auth->login()) {
 				$this->Session->setFlash(__('Welcome, '. $this->Auth->user('username')));
@@ -33,11 +32,15 @@ class UsersController extends AppController {
 	}
 
     public function index() {
-		$this->paginate = array(
-			'limit' => 6,
-			'order' => array('User.username' => 'asc' )
-		);
-		$users = $this->paginate('User');
+    	if ($this->Auth->user('role') != 'customer') {
+	    	$this->paginate = array(
+				'limit' => 6,
+				'order' => array('User.username' => 'asc' )
+			);
+			$users = $this->paginate('User');
+		} else {
+			$users[] = array('User'=>$this->Auth->user());
+		}
 		$this->set(compact('users'));
     }
 
@@ -50,6 +53,19 @@ class UsersController extends AppController {
 				$this->redirect(array('action' => 'login'));
 			} else {
 				$this->Session->setFlash(__('An error occurred. Please, try again.'));
+			}	
+        }
+    }
+
+    public function create() {
+        if ($this->request->is('post')) {
+				
+			$this->User->create();
+			if ($this->User->save($this->request->data)) {
+				$this->Session->setFlash(__('The user has been created'));
+				$this->redirect(array('action' => 'index'));
+			} else {
+				$this->Session->setFlash(__('The user could not be created. Try again.'));
 			}	
         }
     }
@@ -70,7 +86,7 @@ class UsersController extends AppController {
 				$this->Session->setFlash(__('The register has been updated'));
 				$this->redirect(array('action' => 'edit', $id));
 			}else{
-				$this->Session->setFlash(__('Unable to update.'));
+				$this->Session->setFlash(__('Unable to update'));
 			}
 		}
 		if (!$this->request->data) {
@@ -78,7 +94,7 @@ class UsersController extends AppController {
 		}
     }
 
-    public function delete($id = null) {	
+    public function inactivate($id = null) {
 		if (!$id) {
 			$this->Session->setFlash('Please provide a user id');
 			$this->redirect(array('action'=>'index'));
@@ -89,10 +105,10 @@ class UsersController extends AppController {
 			$this->redirect(array('action'=>'index'));
         }
         if ($this->User->saveField('status', 0)) {
-            $this->Session->setFlash(__('User deleted'));
+            $this->Session->setFlash(__('User inactivated'));
             $this->redirect(array('action' => 'index'));
         }
-        $this->Session->setFlash(__('Unable to delete'));
+        $this->Session->setFlash(__('Unable inactivate user'));
         $this->redirect(array('action' => 'index'));
     }
 	
@@ -110,9 +126,18 @@ class UsersController extends AppController {
             $this->Session->setFlash(__('User activated'));
             $this->redirect(array('action' => 'index'));
         }
-        $this->Session->setFlash(__('Unable to be activated'));
+        $this->Session->setFlash(__('Unable to activate user'));
         $this->redirect(array('action' => 'index'));
     }
+
+    public function delete($id) {
+	    if ($this->User->delete($id)) {
+	        $this->Session->setFlash(__('User deleted succesfully'));
+	    } else {
+	        $this->Session->setFlash(__('An error ocurred deleting the user'));
+	    }
+	    return $this->redirect(array('action' => 'index'));
+	}
 
 }
 ?>
