@@ -31,7 +31,10 @@
 				?>
 			</td>
 			<td style="text-align: center;"><?php echo $user['User']['email']; ?></td>
-			<td style="text-align: center;"><?php echo $user['User']['phone']; ?></td>
+			<td style="text-align: center;"><?php echo isset($user['User']['phone']) ? 
+				$user['User']['phone'] : 
+				"No phone registered"; ?>
+			</td>
 			<td style="text-align: center;"><?php echo $user['User']['role']; ?></td>
 			<td style="text-align: center;"><?php echo $this->Time->niceShort($user['User']['modified']); ?></td>
 			<?php if($session_user['role'] == 'admin'): ?>

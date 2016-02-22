@@ -4,7 +4,11 @@ App::uses('BlowfishPasswordHasher', 'Controller/Component/Auth');
 
 class User extends AppModel {
 	
-	// public $avatarUploadDir = 'img/avatars';
+	public $hasMany = array(
+        'SocialProfile' => array(
+            'className' => 'SocialProfile'
+        )
+    );
     
 	public $validate = array(
         'username' => array(
@@ -43,11 +47,11 @@ class User extends AppModel {
 			)
         ),
         'phone' => array(
-            'nonEmpty' => array(
-                'rule' => array('notBlank'),
-                'message' => 'The phone number is required',
-				'allowEmpty' => false
-            ),
+    //         'nonEmpty' => array(		// Commented to allow social login
+    //             'rule' => array('notBlank'),
+    //             'message' => 'The phone number is required',
+				// 'allowEmpty' => false
+    //         ),
 			'isNumeric' => array(
 				'rule'    => array('isNumeric'),
 				'message' => 'Phone have only between 7 and 11 digits'
@@ -117,6 +121,32 @@ class User extends AppModel {
         $value = $value[0];
         return preg_match('/^[\d]{7,11}$/', $value);
     }
+
+    /**
+     * Creates a brand new user from a given social profile
+     * @param array $incomingProfile
+	 * @return array usersmanager user
+     */
+    public function createFromSocialProfile($incomingProfile){
+	    // Check to ensure that we are not using an email that already exists
+	    $existingUser = $this->find('first', array(
+	        'conditions' => array('email' => $incomingProfile['SocialProfile']['email'])
+	    ));
+	    if($existingUser){
+	        return $existingUser;
+	    }
+	    // brand new user
+	    $socialUser['User']['email'] = $incomingProfile['SocialProfile']['email'];
+	    $socialUser['User']['username'] = $incomingProfile['SocialProfile']['user_name'];
+	    $socialUser['User']['role'] = 'customer'; // Default role
+	    $socialUser['User']['password'] = date('Y-m-d h:i:s'); // Technically this means nothing, but a password it's still necessary for social so let's set a random one like the current time.
+	    $socialUser['User']['created'] = date('Y-m-d h:i:s');
+	    $socialUser['User']['modified'] = date('Y-m-d h:i:s');
+	    $result = $this->save($socialUser);
+	    debug($result);
+	    $socialUser['User']['id'] = $this->id;
+	    return $socialUser;
+	}
 
 	/**
 	 * Before Save

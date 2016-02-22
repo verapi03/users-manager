@@ -1,6 +1,9 @@
 <?php
 class UsersController extends AppController {
 
+	var $uses = array('User','SocialProfile');
+	public $components = array('Hybridauth');
+
 	public $paginate = array(
         'limit' => 10,
         'conditions' => array('status' => '1'),
@@ -9,7 +12,7 @@ class UsersController extends AppController {
 	
     public function beforeFilter() {
         parent::beforeFilter();
-        $this->Auth->allow('login','signup'); 
+        $this->Auth->allow('login','signup','social_login','social_endpoint'); 
     }
 	
 	public function login() {
@@ -28,7 +31,75 @@ class UsersController extends AppController {
 	}
 
 	public function logout() {
+		$this->Hybridauth->logout();
 		$this->redirect($this->Auth->logout());
+	}
+
+	/* social login functionality */
+	public function social_login($provider) {
+		if( $this->Hybridauth->connect($provider) ){
+			$this->_successfulHybridauth($provider,$this->Hybridauth->user_profile);
+        }else{
+            // error
+			$this->Session->setFlash($this->Hybridauth->error);
+			$this->redirect($this->Auth->loginAction);
+        }
+	}
+
+	public function social_endpoint($provider = null) {
+		$this->Hybridauth->processEndpoint();
+	}
+	
+	private function _successfulHybridauth($provider, $incomingProfile){
+		// Check if the user is already authenticated using this provider before
+		$this->SocialProfile->recursive = -1;
+		$existingProfile = $this->SocialProfile->find('first', array(
+			'conditions' => array(
+				'social_network_id' => $incomingProfile['SocialProfile']['social_network_id'], 
+				'social_network_name' => $provider
+			)
+		));
+		if ($existingProfile) {
+			// If an existing profile exits, we set the user as connected and log them in
+			$user = $this->User->find('first', array(
+				'conditions' => array('id' => $existingProfile['SocialProfile']['user_id'])
+			));
+			$this->_doSocialLogin($user,true);
+		} else {		
+			// New profile.
+			if ($this->Auth->loggedIn()) {
+				// User is already logged-in , attach profile to logged in user.
+				// Create social profile linked to current user.
+				$incomingProfile['SocialProfile']['user_id'] = $this->Auth->user('id');
+				$this->SocialProfile->save($incomingProfile);
+				$this->Session->setFlash('Your ' . $incomingProfile['SocialProfile']['social_network_name'] . ' account is now linked to your account.');
+				$this->redirect($this->Auth->redirectUrl());
+			} else {
+				// no-one logged and no profile, must be a registration.
+				debug($incomingProfile);
+				$user = $this->User->createFromSocialProfile($incomingProfile);
+				debug($user);
+				$incomingProfile['SocialProfile']['user_id'] = $user['User']['id'];
+				debug($incomingProfile);
+				$this->SocialProfile->save($incomingProfile);
+				// log in with the newly created user
+				$this->_doSocialLogin($user);
+			}
+		}	
+	}
+	
+	private function _doSocialLogin($user, $returning = false) {
+		// CakePHP’s Auth component alternative login function
+		if ($this->Auth->login($user['User'])) {
+			if($returning){
+				$this->Session->setFlash(__('Welcome back, '. $this->Auth->user('username')));
+			} else {
+				$this->Session->setFlash(__('Welcome to this awesome community, '. $this->Auth->user('username')));
+			}
+			$this->redirect($this->Auth->loginRedirect);
+		} else {
+			$this->Session->setFlash(__('Unknown Error could not verify the user: '. $this->Auth->user('username')));
+		}
 	}
 
     public function index() {
@@ -39,7 +110,7 @@ class UsersController extends AppController {
 			);
 			$users = $this->paginate('User');
 		} else {
-			$users[] = array('User'=>$this->Auth->user());
+			$users[] = array('User'=>$this->User->findById($this->Auth->user('id'))['User']);
 		}
 		$this->set(compact('users'));
     }

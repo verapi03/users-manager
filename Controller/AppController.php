@@ -10,6 +10,7 @@
  * @since         CakePHP(tm) v 0.2.9
  */
 
+session_start();
 App::uses('Controller', 'Controller');
 
 /**
@@ -46,7 +47,7 @@ class AppController extends Controller {
             	'controller'=>'users', 
             	'action'=>'login'
             ),
-			'authError'=>'You must be logged in to view this page.',
+			'authError'=>'Access Denied.',
 			'loginError'=>'Invalid Username or Password entered, please try again.'
     ));
 	

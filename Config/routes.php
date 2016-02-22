@@ -15,12 +15,11 @@
  * Connecting  the home page to the login action.
  */
 	Router::connect('/', array('controller' => 'users', 'action' => 'login'));
-/**
- * ...and connect the rest of 'Pages' controller's URLs.
- */
 	Router::connect('/dashboard', array('controller' => 'users', 'action' => 'index'));
 	Router::connect('/login', array('controller' => 'users', 'action' => 'login'));
 	Router::connect('/logout', array('controller' => 'users', 'action' => 'logout'));
+	Router::connect('/social_login/*', array( 'controller' => 'users', 'action' => 'social_login'));
+	Router::connect('/social_endpoint/*', array( 'controller' => 'users', 'action' => 'social_endpoint'));
 
 /**
  * Load all plugin routes. See the CakePlugin documentation on
