@@ -1,4 +1,6 @@
 <?php
+App::uses('CakeEmail', 'Network/Email');
+
 class UsersController extends AppController {
 
 	var $uses = array('User','SocialProfile');
@@ -12,7 +14,7 @@ class UsersController extends AppController {
 	
     public function beforeFilter() {
         parent::beforeFilter();
-        $this->Auth->allow('login','signup','social_login','social_endpoint'); 
+        $this->Auth->allow('login','signup','verify','social_login','social_endpoint'); 
     }
 	
 	public function login() {
@@ -22,8 +24,13 @@ class UsersController extends AppController {
 		}
 		if ($this->request->is('post')) {
 			if ($this->Auth->login()) {
-				$this->Session->setFlash(__('Welcome, '. $this->Auth->user('username')));
-				$this->redirect($this->Auth->redirectUrl());
+				if($this->Auth->user('status')){
+					$this->Session->setFlash(__('Welcome, '. $this->Auth->user('username')));
+					$this->redirect($this->Auth->redirectUrl());
+				}else{
+					$this->Auth->logout();
+					$this->Session->setFlash(__('You are entering wrong credentials or you have not activate your user or your user was removed by an admin.'));
+				}
 			} else {
 				$this->Session->setFlash(__('Invalid email or password'));
 			}
@@ -117,10 +124,21 @@ class UsersController extends AppController {
 
 
     public function signup() {
-        if ($this->request->is('post')) {
+    	if ($this->request->is('post')) {
 			$this->User->create();
+			$hash = sha1($this->data['User']['username'].rand(0,1000));	// Creates token
+			$this->request->data['User']['token'] = $hash;
 			if ($this->User->save($this->request->data)) {
 				$this->Session->setFlash(__('Cool, you are one of us now, go check your email and comeback.'));
+
+				$msg = "Click on the the link below to complete your registration on usersmanager.\n\n".
+					"href=http://usersmanager.local/users/verify/t:".$hash."/i:".$this->User->id."";
+				$Email = new CakeEmail('default');
+				$Email->from(array('raul.andres.vp@gmail.com' => 'usersmanager'));
+				$Email->to($this->data['User']['email']);
+				$Email->subject(__('Confirm Registration for usersmanager'));
+				$result = $Email->send($msg);
+
 				$this->redirect(array('action' => 'login'));
 			} else {
 				$this->Session->setFlash(__('An error occurred. Please, try again.'));
@@ -128,10 +146,33 @@ class UsersController extends AppController {
         }
     }
 
+    public function verify() {
+    	debug($this->Auth->login());
+		if (!empty($this->passedArgs['i']) && !empty($this->passedArgs['t'])){
+			$user = $this->User->findById($this->passedArgs['i']);
+			if (!$user['User']['status']) {
+				if ($user['User']['token'] == $this->passedArgs['t']) {
+					// $user['User']['status'] = 1;
+					// $this->User->save($user);
+					$data = array('id' => $this->passedArgs['i'], 'status' => 1);
+					$this->User->save($data);
+					$this->Session->setFlash('Your registration is complete, go ahead and sign in.');
+				} else {
+					$this->Session->setFlash('Your registration failed, forward the email to the admin at raul.andres.vp@gmail.com');
+				}
+			} else {
+				$this->Session->setFlash('Token has alredy been used, go ahead and sign in.');
+			}
+		} else {
+			$this->Session->setFlash('Token corrupted, forward the email to the admin at raul.andres.vp@gmail.com');
+		}
+		$this->redirect(array('action' => 'login'));
+	}
+
     public function create() {
         if ($this->request->is('post')) {
-				
 			$this->User->create();
+			$this->request->data['User']['status'] = 1;
 			if ($this->User->save($this->request->data)) {
 				$this->Session->setFlash(__('The user has been created'));
 				$this->redirect(array('action' => 'index'));
