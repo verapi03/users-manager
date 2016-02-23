@@ -9,6 +9,15 @@
     	?>
     </fieldset>
 <?php echo $this->Form->end(__('Login')); ?>
+<br/>
+<h2>... OR...</h2>
+<br/>
+<?php
+echo $this->Html->image("login-facebook.jpg", array(
+    "alt" => "Signin with Facebook",
+    'url' => array('action'=>'social_login', 'Facebook')
+));
+?>
 </div>
 <?php
  echo $this->Html->link( "Sign Up Here!", array('action'=>'signup') ); 
