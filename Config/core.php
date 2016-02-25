@@ -365,16 +365,8 @@ Cache::config('_cake_model_', array(
  *
  */
  Configure::write('Hybridauth', array(
-    // "Google" => array(
-    //     "enabled" => true,
-    //     "keys" => array("id" => "Your-Google-Key","secret" => "Your-Google-Secret")
-    // ),
-    // "Twitter" => array(
-    //     "enabled" => true,
-    //     "keys" => array("key" => "Your-Twitter-Key", "secret" => "Your-Twitter-Secret")
-    // ),
     "Facebook" => array(
         "enabled" => true,
-        "keys" => array("id" => "222147158134780", "secret" => "9a3700aa5c8aea86175154489c77e9a8")
+        "keys" => array("id" => "1554804628165177", "secret" => "4d28641623e86c0897db7899010bd4d5")
     )
 ));

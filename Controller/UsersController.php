@@ -132,7 +132,10 @@ class UsersController extends AppController {
 				$this->Session->setFlash(__('Cool, you are one of us now, go check your email and comeback.'));
 
 				$msg = "Click on the the link below to complete your registration on usersmanager.\n\n".
-					"href=http://usersmanager.local/users/verify/t:".$hash."/i:".$this->User->id."";
+				"href=http://ec2-52-37-8-240.us-west-2.compute.amazonaws.com/users/verify/t:".$hash."/i:"
+				.$this->User->id."\n\nIf clicking the link doesn't seem to work, you can copy and paste ".
+				"the link into your browser's address window, or retype it there.";
+				
 				$Email = new CakeEmail('default');
 				$Email->from(array('raul.andres.vp@gmail.com' => 'usersmanager'));
 				$Email->to($this->data['User']['email']);
