@@ -6,3 +6,6 @@
 composer.phar
 Vendor
 Vendor/*
+
+# AWS EC2 Files
+KeyManager.pem

@@ -196,7 +196,7 @@ class UsersController extends AppController {
 			$this->User->id = $id;
 			if ($this->User->save($this->request->data)) {
 				$this->Session->setFlash(__('The register has been updated'));
-				$this->redirect(array('action' => 'edit', $id));
+				$this->redirect(array('action' => 'index'));
 			}else{
 				$this->Session->setFlash(__('Unable to update'));
 			}
