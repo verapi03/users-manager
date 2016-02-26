@@ -11,12 +11,18 @@ class UsersController extends AppController {
         'conditions' => array('status' => '1'),
     	'order' => array('User.username' => 'asc' ) 
     );
-	
+	/**
+	 * Function to only allow the login, signup, etc, to be authorized in any controller. All other 
+	 * actions will only be accessible after the user is logged-in.
+	 */
     public function beforeFilter() {
         parent::beforeFilter();
         $this->Auth->allow('login','signup','verify','social_login','social_endpoint'); 
     }
 	
+	/**
+	 * This grants access permission upon credentials.
+	 */
 	public function login() {
 		//If already logged-in, redirect
 		if ($this->Session->check('Auth.User')) {
@@ -37,12 +43,18 @@ class UsersController extends AppController {
 		} 
 	}
 
+	/**
+	 * Logout action.
+	 */
 	public function logout() {
 		$this->Hybridauth->logout();
 		$this->redirect($this->Auth->logout());
 	}
 
-	/* social login functionality */
+	/**
+	 * Alternate way that users can login to the application. This is not exclusive for fb use 
+	 * only, it can be used to allow login from other platforms.
+	 */
 	public function social_login($provider) {
 		if( $this->Hybridauth->connect($provider) ){
 			$this->_successfulHybridauth($provider,$this->Hybridauth->user_profile);
@@ -52,11 +64,19 @@ class UsersController extends AppController {
 			$this->redirect($this->Auth->loginAction);
         }
 	}
-
+ 	
+ 	/**
+ 	 * Acts as a wrapper class for the HybridAuthComponent’s endpoint function. It is like
+ 	 * a link that facebook redirects to after they have verified your key and secret.
+ 	 */
 	public function social_endpoint($provider = null) {
 		$this->Hybridauth->processEndpoint();
 	}
 	
+	/**
+	 * Completes the facebook login process if the login in the facebook side is successful 
+	 * and also informs the Auth component to allow the user to get in.
+	 */
 	private function _successfulHybridauth($provider, $incomingProfile){
 		// Check if the user is already authenticated using this provider before
 		$this->SocialProfile->recursive = -1;
@@ -95,6 +115,10 @@ class UsersController extends AppController {
 		}	
 	}
 	
+	/**
+	 * This method takes in the user object authenticated in facebook and tries that the 
+	 * Auth component to validate it to let the user successfully logged-in.
+	 */
 	private function _doSocialLogin($user, $returning = false) {
 		// CakePHP’s Auth component alternative login function
 		if ($this->Auth->login($user['User'])) {
@@ -109,6 +133,10 @@ class UsersController extends AppController {
 		}
 	}
 
+	/**
+     * Dashboard that retrieves from the model the info of all users or a single user 
+     * and send it to the view.
+     */
     public function index() {
     	if ($this->Auth->user('role') != 'customer') {
 	    	$this->paginate = array(
@@ -122,7 +150,9 @@ class UsersController extends AppController {
 		$this->set(compact('users'));
     }
 
-
+    /**
+     * This function allows a new user to sing up in the system and sends the verification email.
+     */
     public function signup() {
     	if ($this->request->is('post')) {
 			$this->User->create();
@@ -149,6 +179,10 @@ class UsersController extends AppController {
         }
     }
 
+    /**
+     * This function compares a token and an ID sent from an email against the token
+     * saved in the DB in order to grant access permision to a new user. 
+     */
     public function verify() {
     	debug($this->Auth->login());
 		if (!empty($this->passedArgs['i']) && !empty($this->passedArgs['t'])){
@@ -172,6 +206,10 @@ class UsersController extends AppController {
 		$this->redirect(array('action' => 'login'));
 	}
 
+	/**
+	 * Allows the admin to add new users to the system. It is available when 
+	 * the admin is logged-in.
+	 */
     public function create() {
         if ($this->request->is('post')) {
 			$this->User->create();
@@ -185,6 +223,9 @@ class UsersController extends AppController {
         }
     }
 
+    /**
+     * Method to edit user info.
+     */
     public function edit($id = null) {
 	    if (!$id) {
 			$this->Session->setFlash('Please provide a user id');
@@ -209,6 +250,10 @@ class UsersController extends AppController {
 		}
     }
 
+    /**
+	 * Method to turn a user’s status to inactive by an Admin. This is an alternative to
+	 * the method delete.
+	 */
     public function inactivate($id = null) {
 		if (!$id) {
 			$this->Session->setFlash('Please provide a user id');
@@ -227,6 +272,9 @@ class UsersController extends AppController {
         $this->redirect(array('action' => 'index'));
     }
 	
+	/**
+	 * Method to turn a user’s status to active after they have been inactivated by an Admin.
+	 */
 	public function activate($id = null) {
 		if (!$id) {
 			$this->Session->setFlash('Please provide a user id');
@@ -245,6 +293,9 @@ class UsersController extends AppController {
         $this->redirect(array('action' => 'index'));
     }
 
+    /**
+     * Deletes a user from the DB. Exclusive for admin usage.
+     */
     public function delete($id) {
 	    if ($this->User->delete($id)) {
 	        $this->Session->setFlash(__('User deleted succesfully'));
