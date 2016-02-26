@@ -13,6 +13,10 @@ class HybridauthComponent extends Component {
     public $debug_mode = false;
     public $debug_file = "";
 
+    /**
+     * Initializes the HybridAuth library, loads the key and secret settingsfor facebook and defines the 
+     * endpoint-link that the social networks redirect to after they have verified the key and secret.
+     */
     protected function init(){
         App::import('Vendor', 'hybridauth/Hybrid/Auth');
         $config = array(
@@ -56,7 +60,7 @@ class HybridauthComponent extends Component {
     }
     
     /**
-     * logs you out
+     * logs out
      */
     public function logout(){
         if( !$this->hybridauth ) $this->init ();
@@ -71,9 +75,8 @@ class HybridauthComponent extends Component {
     }
     
     /**
-     * connects to a provider
-     * 
-     * 
+     * Connects to a provider and handles the various exceptions that could happen 
+     *  during the connection process.
      * @param string $provider pass Google, Facebook etc...
      * @return boolean wether you have been logged in or not
      */

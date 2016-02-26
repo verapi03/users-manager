@@ -1,7 +1,7 @@
 # users-manager
 Functional basic user management system with sign-up, sign-in, facebook login and user management.
 
-The app uses the MVC architectural pattern developed entirely in CakePHP 2.8. This readme file walks you through three main sections, general structure of the project, the facebook login functionality and final notes about the Admin CRUD module.
+The app uses the MVC architectural pattern developed entirely in CakePHP 2.8. This readme file walks you through two main sections, general structure of the project and the facebook login functionality.
 
 General Structure of the Project:
 
@@ -19,4 +19,20 @@ In `User` model is where all the validation logic is, some of them are Cake’s 
 
 The Facebook Login Functionality:
 
-In order to handle the facebook login aspect, the HybridAuth PHP library was used (http://hybridauth.sourceforge.net/), an easy to use social login library written in PHP, so this app can be easily scalated to support other common social login as Twiter, linkedIn, Gmail, etc. This library was installed via composer as well as the CakePHP itself.
+In order to handle the facebook login aspect, the `HybridAuth` PHP library was used (http://hybridauth.sourceforge.net/), an easy to use social login library written in PHP, so this app can be easily scalated to support other common social login as Twiter, linkedIn, Gmail, etc. This library was installed via composer as well as the CakePHP itself.
+
+Initially the core.php file was modified to include information about the social media provider (key and the secret), in this case facebook.
+
+As mentioned before, routes.php was also updated to include routes for the facebook login controllers: `social_login` and `social_endpoint`.
+
+Regarding to the models I created the new model `SocialProfile`, whose object is storing user's facebook profiles information. Every social profile belongs to a user so the file `SocialProfile.php` was associated to `Users` model to indicate that a user can have multiple social profiles (beside facebook).
+
+In order to calling the `HybridAuth library` that was installed with composer, a CakePHP Component called `HybridAuthComponent` was created, a reusable component that can be used from any controller. This component is the only component that interacts directly with the `HybridAuth library`. All its functions are slightly introduced in their headers, but mentioning the most importants:
+
+`processEndpoint()` is the endpoint acts as a proxy that connects the web application to the social network (facebook), where the login tokens are exchanged. `getSessionData()` and `restoreSessionData()` deal with Session variables used by `HybridAuth` for authenticating. `connect() starts the process of connecting to a social network to start the social login process and `normalizeSocialProfile()` normalizes the data coming from the social network.
+
+With regards to the `UsersController` functions related to `HybridAuth`, `social_login()` is used as the way that users can make use to login to the application. `_successfulHybridauth()` completes the facebook login process and also informs the Auth component to let the user to get in. It's important to mention that HybridAuth handles the authentication on the social network side and that CakePHP’s Auth component handles authentication on the usersmanager application’s side.
+
+Lastly `_doSocialLogin()` is the function that tells CakePHP’s Auth component that the user has been authenticated. It takes a parameter `$user` which is the user object that Auth component validates against. If Auth can validate the user, it lets the user get through and it would have logged-in, otherwise, Auth blocks the user from accessing the restricted parts of the app.
+
+
