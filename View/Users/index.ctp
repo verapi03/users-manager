@@ -64,5 +64,7 @@
 <?php if($session_user['role'] == 'admin'): ?>
 	<?php echo $this->Html->link( "Create A New User", array('action'=>'create'),array('escape' => false) ); ?>
 	<br>
+	<?php echo $this->Html->link( "Export List of Users", array('action'=>'export'),array('escape' => false) ); ?>
+	<br>
 <?php endif; ?>
 <?php echo $this->Html->link( "Logout", array('action'=>'logout') ); ?>

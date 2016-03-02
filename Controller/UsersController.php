@@ -184,7 +184,7 @@ class UsersController extends AppController {
      * saved in the DB in order to grant access permision to a new user. 
      */
     public function verify() {
-    	debug($this->Auth->login());
+    	// debug($this->Auth->login());
 		if (!empty($this->passedArgs['i']) && !empty($this->passedArgs['t'])){
 			$user = $this->User->findById($this->passedArgs['i']);
 			if (!$user['User']['status']) {
@@ -303,6 +303,61 @@ class UsersController extends AppController {
 	        $this->Session->setFlash(__('An error ocurred deleting the user'));
 	    }
 	    return $this->redirect(array('action' => 'index'));
+	}
+
+	/**
+     * Exports the list of users from the DB. Exclusive for admin usage.
+     */
+    public function export() {
+    	App::import('Vendor', 'PHPExcel/Classes/PHPExcel.php');
+    	$users = $this->User->exportUsers();
+		// debug($users);
+		if (count($users) > 0) {
+			$objPHPExcel = new PHPExcel();
+		  
+			//Excel information
+			$objPHPExcel->getProperties()
+				->setCreator("Andres Vera")
+				->setLastModifiedBy("Andres Vera")
+				->setTitle("Users List")
+				->setSubject("Users List")
+				->setDescription("Users Document generated with PHPExcel")
+				->setKeywords("andres phpexcel")
+				->setCategory("users");
+
+			$i = 1;    
+			foreach ($users as $user) {
+				if ($i == 1) {
+					$letter = "A";
+					foreach ($user['users'] as $field_name => $field_value) {
+						$objPHPExcel->setActiveSheetIndex(0)
+							->setCellValue($letter.$i, $field_name);
+						$letter++;	
+					}
+				} else {
+					$objPHPExcel->setActiveSheetIndex(0)
+						->setCellValue("A".$i, $user['users']['id'])
+						->setCellValue("B".$i, $user['users']['username'])
+						->setCellValue("C".$i, $user['users']['email'])
+						->setCellValue("D".$i, $user['users']['phone'])
+						->setCellValue("E".$i, $user['users']['role'])
+						->setCellValue("F".$i, $user['users']['status'])
+						->setCellValue("G".$i, $user['users']['created'])
+						->setCellValue("H".$i, $user['users']['modified']);
+				}
+				$i++;
+			}
+		}
+
+		header('Content-Type: application/vnd.ms-excel');
+		header('Content-Disposition: attachment;filename="users-manager.xlsx"');
+		header('Cache-Control: max-age=0');
+		 
+		$objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel,'Excel2007');
+		$objWriter->save('php://output');
+
+		// $this->Session->setFlash(__('Check out your download folder'));
+		return $this->redirect(array('action' => 'index'));
 	}
 
 }

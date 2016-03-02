@@ -4,21 +4,36 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "f337e9461b08c9dbadbcbf6fe89082ca",
-    "content-hash": "0af4c9f7148cbbfad6e14f4dc88b3e65",
+    "hash": "366f3dc210fb6393c37dbdfd4c7fa624",
+    "content-hash": "ca824ea99687f88a9c7ddaed2b7774d3",
     "packages": [
         {
+            "name": "PHPOffice/PHPExcel",
+            "version": "1.8.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/PHPOffice/PHPExcel.git",
+                "reference": "1.8.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "PHPExcel": "Classes/"
+                }
+            }
+        },
+        {
             "name": "cakephp/cakephp",
-            "version": "2.8.0",
+            "version": "2.8.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cakephp/cakephp.git",
-                "reference": "80f18448b510bcb1376c0b68bc70b98948e2b27a"
+                "reference": "78f199f8a05ef4e5b3b7f665e37918da4a3bd6e8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cakephp/cakephp/zipball/80f18448b510bcb1376c0b68bc70b98948e2b27a",
-                "reference": "80f18448b510bcb1376c0b68bc70b98948e2b27a",
+                "url": "https://api.github.com/repos/cakephp/cakephp/zipball/78f199f8a05ef4e5b3b7f665e37918da4a3bd6e8",
+                "reference": "78f199f8a05ef4e5b3b7f665e37918da4a3bd6e8",
                 "shasum": ""
             },
             "require": {
@@ -49,7 +64,7 @@
             "keywords": [
                 "framework"
             ],
-            "time": "2016-02-07 01:59:33"
+            "time": "2016-02-28 03:31:18"
         },
         {
             "name": "hybridauth/hybridauth",

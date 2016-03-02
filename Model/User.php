@@ -149,6 +149,17 @@ class User extends AppModel {
 	}
 
 	/**
+     * Retrieves the list of users to export
+	 * @return array usersmanager user
+     */
+    public function exportUsers(){
+		$sql = "SELECT id, username, email, phone, role, status, created, modified
+			FROM users 
+			ORDER BY username ASC";
+	    return $this->query($sql);
+	}
+
+	/**
 	 * Before Save
 	 * @param array $options
 	 * @return boolean
